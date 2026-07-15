@@ -45,6 +45,9 @@
     <ClCompile Include="..\src\dumper\il2cpp_binary.cpp">
       <Filter>src\dumper</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\dumper\executor.cpp">
+      <Filter>src\dumper</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -87,6 +90,9 @@
       <Filter>src\dumper</Filter>
     </ClInclude>
     <ClInclude Include="..\src\dumper\il2cpp_binary.hpp">
+      <Filter>src\dumper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\dumper\executor.hpp">
       <Filter>src\dumper</Filter>
     </ClInclude>
   </ItemGroup>

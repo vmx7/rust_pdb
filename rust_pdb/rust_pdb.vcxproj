@@ -97,6 +97,7 @@
     <ClCompile Include="..\src\pdb\script_json.cpp" />
     <ClCompile Include="..\src\dumper\metadata.cpp" />
     <ClCompile Include="..\src\dumper\il2cpp_binary.cpp" />
+    <ClCompile Include="..\src\dumper\executor.cpp" />
     <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +114,7 @@
     <ClInclude Include="..\src\dumper\reader.hpp" />
     <ClInclude Include="..\src\dumper\metadata.hpp" />
     <ClInclude Include="..\src\dumper\il2cpp_binary.hpp" />
+    <ClInclude Include="..\src\dumper\executor.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
