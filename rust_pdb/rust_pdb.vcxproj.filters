@@ -26,6 +26,9 @@
     <ClInclude Include="..\src\io.hpp">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\pdb\proc.hpp">
+      <Filter>src\pdb</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\pdb\writer.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>

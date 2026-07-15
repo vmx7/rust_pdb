@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\io.hpp" />
+    <ClInclude Include="..\src\pdb\proc.hpp" />
     <ClInclude Include="..\src\pdb\writer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
