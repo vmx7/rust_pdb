@@ -94,7 +94,6 @@
     <ClCompile Include="..\src\pdb\gsi.cpp" />
     <ClCompile Include="..\src\pdb\il2cpp.cpp" />
     <ClCompile Include="..\src\pdb\streams.cpp" />
-    <ClCompile Include="..\src\pdb\script_json.cpp" />
     <ClCompile Include="..\src\dumper\metadata.cpp" />
     <ClCompile Include="..\src\dumper\il2cpp_binary.cpp" />
     <ClCompile Include="..\src\dumper\executor.cpp" />
@@ -111,7 +110,6 @@
     <ClInclude Include="..\src\pdb\gsi.hpp" />
     <ClInclude Include="..\src\pdb\il2cpp.hpp" />
     <ClInclude Include="..\src\pdb\streams.hpp" />
-    <ClInclude Include="..\src\pdb\script_json.hpp" />
     <ClInclude Include="..\src\dumper\reader.hpp" />
     <ClInclude Include="..\src\dumper\metadata.hpp" />
     <ClInclude Include="..\src\dumper\il2cpp_binary.hpp" />

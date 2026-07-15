@@ -36,9 +36,6 @@
     <ClCompile Include="..\src\pdb\streams.cpp">
       <Filter>src\pdb</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\pdb\script_json.cpp">
-      <Filter>src\pdb</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\dumper\metadata.cpp">
       <Filter>src\dumper</Filter>
     </ClCompile>
@@ -81,9 +78,6 @@
       <Filter>src\pdb</Filter>
     </ClInclude>
     <ClInclude Include="..\src\pdb\streams.hpp">
-      <Filter>src\pdb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\pdb\script_json.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>
     <ClInclude Include="..\src\dumper\reader.hpp">
