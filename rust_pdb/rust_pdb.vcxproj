@@ -88,12 +88,14 @@
   <ItemGroup>
     <ClCompile Include="..\src\io.cpp" />
     <ClCompile Include="..\src\pdb\writer.cpp" />
+    <ClCompile Include="..\src\pdb\pe.cpp" />
     <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\io.hpp" />
     <ClInclude Include="..\src\pdb\proc.hpp" />
     <ClInclude Include="..\src\pdb\writer.hpp" />
+    <ClInclude Include="..\src\pdb\pe.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
