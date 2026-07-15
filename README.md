@@ -11,10 +11,14 @@ build (visual studio 2022, x64 release):
     build.cmd
 
 run:
+    x64\Release\rust_pdb.exe
     x64\Release\rust_pdb.exe <GameAssembly.dll> <il2cpp.h> <script.json> [out.pdb]
 
-out.pdb defaults to <GameAssembly>.pdb next to the dll. byte-identical to the
-reference native writer on the same inputs (same sha256).
+with no arguments it auto-detects: GameAssembly.dll from a steam rust install
+and il2cpp.h / script.json from an il2cppdumper output folder under documents,
+writing the pdb next to the dll. a single <dir> argument takes all three from
+that directory. byte-identical to the reference native writer on the same
+inputs (same sha256).
 
 refs:
     llvm pdb file format docs, microsoft-pdb reference repo
