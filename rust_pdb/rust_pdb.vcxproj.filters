@@ -12,90 +12,90 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\io.cpp">
+    <ClCompile Include="src\io.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\pdb\writer.cpp">
+    <ClCompile Include="src\pdb\writer.cpp">
       <Filter>src\pdb</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\pdb\pe.cpp">
+    <ClCompile Include="src\pdb\pe.cpp">
       <Filter>src\pdb</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\pdb\msf.cpp">
+    <ClCompile Include="src\pdb\msf.cpp">
       <Filter>src\pdb</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\pdb\tpi.cpp">
+    <ClCompile Include="src\pdb\tpi.cpp">
       <Filter>src\pdb</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\pdb\gsi.cpp">
+    <ClCompile Include="src\pdb\gsi.cpp">
       <Filter>src\pdb</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\pdb\il2cpp.cpp">
+    <ClCompile Include="src\pdb\il2cpp.cpp">
       <Filter>src\pdb</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\pdb\streams.cpp">
+    <ClCompile Include="src\pdb\streams.cpp">
       <Filter>src\pdb</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\dumper\metadata.cpp">
+    <ClCompile Include="src\dumper\metadata.cpp">
       <Filter>src\dumper</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\dumper\il2cpp_binary.cpp">
+    <ClCompile Include="src\dumper\il2cpp_binary.cpp">
       <Filter>src\dumper</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\dumper\executor.cpp">
+    <ClCompile Include="src\dumper\executor.cpp">
       <Filter>src\dumper</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\dumper\struct_generator.cpp">
+    <ClCompile Include="src\dumper\struct_generator.cpp">
       <Filter>src\dumper</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\io.hpp">
+    <ClInclude Include="src\io.hpp">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\pdb\proc.hpp">
+    <ClInclude Include="src\pdb\proc.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\pdb\writer.hpp">
+    <ClInclude Include="src\pdb\writer.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\pdb\pe.hpp">
+    <ClInclude Include="src\pdb\pe.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\pdb\msf.hpp">
+    <ClInclude Include="src\pdb\msf.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\pdb\tpi.hpp">
+    <ClInclude Include="src\pdb\tpi.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\pdb\gsi.hpp">
+    <ClInclude Include="src\pdb\gsi.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\pdb\il2cpp.hpp">
+    <ClInclude Include="src\pdb\il2cpp.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\pdb\streams.hpp">
+    <ClInclude Include="src\pdb\streams.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\dumper\reader.hpp">
+    <ClInclude Include="src\dumper\reader.hpp">
       <Filter>src\dumper</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\dumper\metadata.hpp">
+    <ClInclude Include="src\dumper\metadata.hpp">
       <Filter>src\dumper</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\dumper\il2cpp_binary.hpp">
+    <ClInclude Include="src\dumper\il2cpp_binary.hpp">
       <Filter>src\dumper</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\dumper\executor.hpp">
+    <ClInclude Include="src\dumper\executor.hpp">
       <Filter>src\dumper</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\dumper\struct_generator.hpp">
+    <ClInclude Include="src\dumper\struct_generator.hpp">
       <Filter>src\dumper</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\dumper\header_constants.hpp">
+    <ClInclude Include="src\dumper\header_constants.hpp">
       <Filter>src\dumper</Filter>
     </ClInclude>
   </ItemGroup>

@@ -53,7 +53,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -75,7 +75,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -86,36 +86,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\io.cpp" />
-    <ClCompile Include="..\src\pdb\writer.cpp" />
-    <ClCompile Include="..\src\pdb\pe.cpp" />
-    <ClCompile Include="..\src\pdb\msf.cpp" />
-    <ClCompile Include="..\src\pdb\tpi.cpp" />
-    <ClCompile Include="..\src\pdb\gsi.cpp" />
-    <ClCompile Include="..\src\pdb\il2cpp.cpp" />
-    <ClCompile Include="..\src\pdb\streams.cpp" />
-    <ClCompile Include="..\src\dumper\metadata.cpp" />
-    <ClCompile Include="..\src\dumper\il2cpp_binary.cpp" />
-    <ClCompile Include="..\src\dumper\executor.cpp" />
-    <ClCompile Include="..\src\dumper\struct_generator.cpp" />
-    <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="src\io.cpp" />
+    <ClCompile Include="src\pdb\writer.cpp" />
+    <ClCompile Include="src\pdb\pe.cpp" />
+    <ClCompile Include="src\pdb\msf.cpp" />
+    <ClCompile Include="src\pdb\tpi.cpp" />
+    <ClCompile Include="src\pdb\gsi.cpp" />
+    <ClCompile Include="src\pdb\il2cpp.cpp" />
+    <ClCompile Include="src\pdb\streams.cpp" />
+    <ClCompile Include="src\dumper\metadata.cpp" />
+    <ClCompile Include="src\dumper\il2cpp_binary.cpp" />
+    <ClCompile Include="src\dumper\executor.cpp" />
+    <ClCompile Include="src\dumper\struct_generator.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\io.hpp" />
-    <ClInclude Include="..\src\pdb\proc.hpp" />
-    <ClInclude Include="..\src\pdb\writer.hpp" />
-    <ClInclude Include="..\src\pdb\pe.hpp" />
-    <ClInclude Include="..\src\pdb\msf.hpp" />
-    <ClInclude Include="..\src\pdb\tpi.hpp" />
-    <ClInclude Include="..\src\pdb\gsi.hpp" />
-    <ClInclude Include="..\src\pdb\il2cpp.hpp" />
-    <ClInclude Include="..\src\pdb\streams.hpp" />
-    <ClInclude Include="..\src\dumper\reader.hpp" />
-    <ClInclude Include="..\src\dumper\metadata.hpp" />
-    <ClInclude Include="..\src\dumper\il2cpp_binary.hpp" />
-    <ClInclude Include="..\src\dumper\executor.hpp" />
-    <ClInclude Include="..\src\dumper\struct_generator.hpp" />
-    <ClInclude Include="..\src\dumper\header_constants.hpp" />
+    <ClInclude Include="src\io.hpp" />
+    <ClInclude Include="src\pdb\proc.hpp" />
+    <ClInclude Include="src\pdb\writer.hpp" />
+    <ClInclude Include="src\pdb\pe.hpp" />
+    <ClInclude Include="src\pdb\msf.hpp" />
+    <ClInclude Include="src\pdb\tpi.hpp" />
+    <ClInclude Include="src\pdb\gsi.hpp" />
+    <ClInclude Include="src\pdb\il2cpp.hpp" />
+    <ClInclude Include="src\pdb\streams.hpp" />
+    <ClInclude Include="src\dumper\reader.hpp" />
+    <ClInclude Include="src\dumper\metadata.hpp" />
+    <ClInclude Include="src\dumper\il2cpp_binary.hpp" />
+    <ClInclude Include="src\dumper\executor.hpp" />
+    <ClInclude Include="src\dumper\struct_generator.hpp" />
+    <ClInclude Include="src\dumper\header_constants.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
