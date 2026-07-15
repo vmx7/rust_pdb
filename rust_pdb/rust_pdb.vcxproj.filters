@@ -27,6 +27,9 @@
     <ClCompile Include="..\src\pdb\tpi.cpp">
       <Filter>src\pdb</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\pdb\gsi.cpp">
+      <Filter>src\pdb</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -48,6 +51,9 @@
       <Filter>src\pdb</Filter>
     </ClInclude>
     <ClInclude Include="..\src\pdb\tpi.hpp">
+      <Filter>src\pdb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\pdb\gsi.hpp">
       <Filter>src\pdb</Filter>
     </ClInclude>
   </ItemGroup>
