@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -25,6 +26,7 @@ namespace fs = std::filesystem;
 namespace
 {
     constexpr uint64_t max_proc_size = 0x200000;
+    constexpr const char* tag = "[rust_pdb]";
 
     struct inputs
     {
@@ -130,10 +132,14 @@ namespace
 
     [[nodiscard]] int generate(const inputs & in)
     {
-        const il2pdb::pe_info pe = il2pdb::pe_parse(in.dll);
-        std::fprintf(stderr, "pe: %zu sections, rsds=%s, age=%u\n", pe.sections.size(),
-            pe.has_rsds ? "yes" : "no", pe.age);
+        const auto started = std::chrono::steady_clock::now();
+        std::fprintf(stderr, "%s target %s\n", tag, in.dll.c_str());
 
+        const il2pdb::pe_info pe = il2pdb::pe_parse(in.dll);
+        std::fprintf(stderr, "%s pe image: %zu sections, age %u%s\n", tag, pe.sections.size(),
+            pe.age, pe.has_rsds ? "" : " (no rsds)");
+
+        std::fprintf(stderr, "%s dumping rust via il2cpp ...\n", tag);
         il2pdb::dump::metadata md(il2pdb::read_bytes(in.metadata));
         il2pdb::dump::il2cpp_binary bin(il2pdb::read_bytes(in.dll),
             static_cast<int>(md.type_defs.size()), static_cast<int>(md.image_defs.size()));
@@ -141,11 +147,12 @@ namespace
         il2pdb::dump::executor ex(md, bin);
         ex.build_struct_names();
         const il2pdb::dump::dump_result res = il2pdb::dump::run_dump(md, bin, ex);
-        std::fprintf(stderr, "dump: %zu methods, %zu addresses, il2cpp.h %zu bytes\n",
-            res.methods.size(), res.addresses.size(), res.il2cpp_h.size());
+        std::fprintf(stderr, "%s   %zu methods, %zu addresses, %zu mb il2cpp.h\n", tag,
+            res.methods.size(), res.addresses.size(), res.il2cpp_h.size() / 1000000);
 
+        std::fprintf(stderr, "%s building type info ...\n", tag);
         il2pdb::il2cpp_types types = il2pdb::parse_and_build(res.il2cpp_h);
-        std::fprintf(stderr, "types: %zu records\n", types.records.size());
+        std::fprintf(stderr, "%s   %zu type records\n", tag, types.records.size());
 
         const std::vector<uint64_t> & addrs = res.addresses;
         const auto code_size = [&addrs](uint64_t rva, uint32_t sec_end) -> uint32_t
@@ -201,13 +208,19 @@ namespace
             }
             data_syms.push_back(il2pdb::data_sym{d.name, so->seg, so->off, ti});
         }
-        std::fprintf(stderr, "data symbols: %zu\n", data_syms.size());
+        std::fprintf(stderr, "%s   %zu functions, %zu data symbols\n", tag,
+            procs.size(), data_syms.size());
 
+        std::fprintf(stderr, "%s writing pdb ...\n", tag);
         il2pdb::build_input input{pe.guid, pe.age, std::move(procs), std::move(types.records),
             pe.section_headers, std::move(data_syms)};
         const std::vector<uint8_t> pdb = il2pdb::build_pdb(input);
         il2pdb::write_bytes(in.out_pdb, std::span<const uint8_t>(pdb.data(), pdb.size()));
-        std::fprintf(stderr, "wrote %s (%zu mb)\n", in.out_pdb.c_str(), pdb.size() / 1000000);
+
+        const double secs = std::chrono::duration<double>(
+            std::chrono::steady_clock::now() - started).count();
+        std::fprintf(stderr, "%s done: %s (%zu mb) in %.1fs\n", tag, in.out_pdb.c_str(),
+            pdb.size() / 1000000, secs);
         return 0;
     }
 }
@@ -233,12 +246,12 @@ int main(int argc, char** argv)
         const std::optional<inputs> detected = auto_detect();
         if (!detected.has_value())
         {
-            std::fprintf(stderr, "could not auto-detect rust; pass <GameAssembly.dll> "
-                "<global-metadata.dat> [out.pdb]\n");
+            std::fprintf(stderr, "%s could not auto-detect rust; pass <GameAssembly.dll> "
+                "<global-metadata.dat> [out.pdb]\n", tag);
             return 2;
         }
         in = *detected;
-        std::fprintf(stderr, "auto-detected: %s\n", in.dll.c_str());
+        std::fprintf(stderr, "%s auto-detected steam rust\n", tag);
     }
     else if (positional.size() == 2 || positional.size() == 3)
     {
@@ -261,7 +274,7 @@ int main(int argc, char** argv)
     }
     catch (const std::exception & e)
     {
-        std::fprintf(stderr, "error: %s\n", e.what());
+        std::fprintf(stderr, "%s error: %s\n", tag, e.what());
         return 1;
     }
 }
