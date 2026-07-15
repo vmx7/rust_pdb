@@ -94,6 +94,7 @@
     <ClCompile Include="..\src\pdb\gsi.cpp" />
     <ClCompile Include="..\src\pdb\il2cpp.cpp" />
     <ClCompile Include="..\src\pdb\streams.cpp" />
+    <ClCompile Include="..\src\pdb\script_json.cpp" />
     <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +107,7 @@
     <ClInclude Include="..\src\pdb\gsi.hpp" />
     <ClInclude Include="..\src\pdb\il2cpp.hpp" />
     <ClInclude Include="..\src\pdb\streams.hpp" />
+    <ClInclude Include="..\src\pdb\script_json.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
