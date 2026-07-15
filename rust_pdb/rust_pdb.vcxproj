@@ -98,6 +98,7 @@
     <ClCompile Include="..\src\dumper\metadata.cpp" />
     <ClCompile Include="..\src\dumper\il2cpp_binary.cpp" />
     <ClCompile Include="..\src\dumper\executor.cpp" />
+    <ClCompile Include="..\src\dumper\struct_generator.cpp" />
     <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +116,8 @@
     <ClInclude Include="..\src\dumper\metadata.hpp" />
     <ClInclude Include="..\src\dumper\il2cpp_binary.hpp" />
     <ClInclude Include="..\src\dumper\executor.hpp" />
+    <ClInclude Include="..\src\dumper\struct_generator.hpp" />
+    <ClInclude Include="..\src\dumper\header_constants.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
