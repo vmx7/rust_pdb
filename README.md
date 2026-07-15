@@ -8,7 +8,7 @@ pdb from scratch: msf container plus tpi / dbi / gsi / psi streams. no compiler,
 no linker, no il2cppdumper. x64 pe only (metadata v39, e.g. rust).
 
 build (visual studio 2022, x64 release):
-    build.cmd
+    msbuild rust_pdb.sln -p:Configuration=Release -p:Platform=x64
 
 run:
     x64\Release\rust_pdb.exe
