@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -8,19 +7,17 @@
 #include <optional>
 #include <span>
 #include <string>
+#include <system_error>
 #include <vector>
 
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#pragma warning(push, 0)
-#include <windows.h>
-#pragma warning(pop)
-
+#include "dumper/executor.hpp"
+#include "dumper/il2cpp_binary.hpp"
+#include "dumper/metadata.hpp"
+#include "dumper/struct_generator.hpp"
 #include "io.hpp"
 #include "pdb/il2cpp.hpp"
 #include "pdb/pe.hpp"
 #include "pdb/proc.hpp"
-#include "pdb/script_json.hpp"
 #include "pdb/streams.hpp"
 
 namespace fs = std::filesystem;
@@ -32,34 +29,34 @@ namespace
     struct inputs
     {
         std::string dll;
-        std::string header;
-        std::string script;
+        std::string metadata;
         std::string out_pdb;
     };
 
-    [[nodiscard]] std::string env_path(const char* name)
+    [[nodiscard]] std::optional<fs::path> find_metadata(const fs::path & rust_dir)
     {
-        std::array<char, MAX_PATH> buf{};
-        const DWORD n = GetEnvironmentVariableA(name, buf.data(), static_cast<DWORD>(buf.size()));
-        if (n == 0 || n >= static_cast<DWORD>(buf.size()))
+        std::error_code ec{};
+        for (const auto & entry : fs::directory_iterator(rust_dir, ec))
         {
-            return {};
+            if (!entry.is_directory(ec))
+            {
+                continue;
+            }
+            const std::string name = entry.path().filename().string();
+            if (name.size() >= 5 && name.compare(name.size() - 5, 5, "_Data") == 0)
+            {
+                const fs::path meta = entry.path() / "il2cpp_data" / "Metadata"
+                    / "global-metadata.dat";
+                if (fs::exists(meta, ec))
+                {
+                    return meta;
+                }
+            }
         }
-        return std::string(buf.data(), n);
+        return std::nullopt;
     }
 
-    [[nodiscard]] std::string exe_dir()
-    {
-        std::array<char, MAX_PATH> buf{};
-        const DWORD n = GetModuleFileNameA(nullptr, buf.data(), static_cast<DWORD>(buf.size()));
-        if (n == 0 || n >= static_cast<DWORD>(buf.size()))
-        {
-            return {};
-        }
-        return fs::path(std::string(buf.data(), n)).parent_path().string();
-    }
-
-    [[nodiscard]] std::vector<fs::path> steam_roots()
+    [[nodiscard]] std::vector<fs::path> steam_libraries()
     {
         std::vector<fs::path> roots{};
         std::error_code ec{};
@@ -112,91 +109,23 @@ namespace
         return roots;
     }
 
-    [[nodiscard]] std::string find_rust_dll()
-    {
-        std::error_code ec{};
-        for (const fs::path & root : steam_roots())
-        {
-            const fs::path dll = root / "steamapps" / "common" / "Rust" / "GameAssembly.dll";
-            if (fs::exists(dll, ec))
-            {
-                return dll.string();
-            }
-        }
-        return {};
-    }
-
-    [[nodiscard]] std::string find_dump_dir(const std::vector<fs::path> & seeds)
-    {
-        std::error_code ec{};
-        std::vector<fs::path> dirs = seeds;
-        const std::string profile = env_path("USERPROFILE");
-        if (!profile.empty())
-        {
-            for (const auto & entry : fs::directory_iterator(fs::path(profile) / "Documents", ec))
-            {
-                if (entry.is_directory(ec))
-                {
-                    dirs.push_back(entry.path());
-                }
-            }
-        }
-        for (const fs::path & d : dirs)
-        {
-            if (d.empty())
-            {
-                continue;
-            }
-            if (fs::exists(d / "il2cpp.h", ec) && fs::exists(d / "script.json", ec))
-            {
-                return d.string();
-            }
-        }
-        return {};
-    }
-
     [[nodiscard]] std::optional<inputs> auto_detect()
     {
         std::error_code ec{};
-        const fs::path cwd = fs::current_path(ec);
-        const fs::path exe = exe_dir();
-
-        std::string dll{};
-        for (const fs::path & d : {cwd, exe})
+        for (const fs::path & lib : steam_libraries())
         {
-            if (d.empty())
+            const fs::path rust = lib / "steamapps" / "common" / "Rust";
+            const fs::path dll = rust / "GameAssembly.dll";
+            if (!fs::exists(dll, ec))
             {
                 continue;
             }
-            const fs::path cand = d / "GameAssembly.dll";
-            if (fs::exists(cand, ec))
+            if (const std::optional<fs::path> meta = find_metadata(rust))
             {
-                dll = cand.string();
-                break;
+                return inputs{dll.string(), meta->string(), (rust / "GameAssembly.pdb").string()};
             }
         }
-        if (dll.empty())
-        {
-            dll = find_rust_dll();
-        }
-        if (dll.empty())
-        {
-            return std::nullopt;
-        }
-
-        const fs::path dll_dir = fs::path(dll).parent_path();
-        const std::string dump = find_dump_dir({cwd, dll_dir, exe});
-        if (dump.empty())
-        {
-            return std::nullopt;
-        }
-
-        inputs in{};
-        in.dll = dll;
-        in.header = (fs::path(dump) / "il2cpp.h").string();
-        in.script = (fs::path(dump) / "script.json").string();
-        in.out_pdb = (dll_dir / "GameAssembly.pdb").string();
-        return in;
+        return std::nullopt;
     }
 
     [[nodiscard]] int generate(const inputs & in)
@@ -205,17 +134,20 @@ namespace
         std::fprintf(stderr, "pe: %zu sections, rsds=%s, age=%u\n", pe.sections.size(),
             pe.has_rsds ? "yes" : "no", pe.age);
 
-        il2pdb::il2cpp_types types = il2pdb::parse_and_build(il2pdb::read_text(in.header));
+        il2pdb::dump::metadata md(il2pdb::read_bytes(in.metadata));
+        il2pdb::dump::il2cpp_binary bin(il2pdb::read_bytes(in.dll),
+            static_cast<int>(md.type_defs.size()), static_cast<int>(md.image_defs.size()));
+        bin.init();
+        il2pdb::dump::executor ex(md, bin);
+        ex.build_struct_names();
+        const il2pdb::dump::dump_result res = il2pdb::dump::run_dump(md, bin, ex);
+        std::fprintf(stderr, "dump: %zu methods, %zu addresses, il2cpp.h %zu bytes\n",
+            res.methods.size(), res.addresses.size(), res.il2cpp_h.size());
+
+        il2pdb::il2cpp_types types = il2pdb::parse_and_build(res.il2cpp_h);
         std::fprintf(stderr, "types: %zu records\n", types.records.size());
 
-        const il2pdb::script scr = il2pdb::parse_script_json(il2pdb::read_text(in.script));
-        std::fprintf(stderr, "script: %zu methods, %zu addresses\n",
-            scr.methods.size(), scr.addresses.size());
-
-        std::vector<uint64_t> addrs = scr.addresses;
-        std::sort(addrs.begin(), addrs.end());
-        addrs.erase(std::unique(addrs.begin(), addrs.end()), addrs.end());
-
+        const std::vector<uint64_t> & addrs = res.addresses;
         const auto code_size = [&addrs](uint64_t rva, uint32_t sec_end) -> uint32_t
         {
             const uint64_t cap = static_cast<uint64_t>(sec_end) - rva;
@@ -238,8 +170,8 @@ namespace
         };
 
         std::vector<il2pdb::proc> procs{};
-        procs.reserve(scr.methods.size());
-        for (const il2pdb::script_method & m : scr.methods)
+        procs.reserve(res.methods.size());
+        for (const il2pdb::dump::script_method_entry & m : res.methods)
         {
             const uint32_t rva = static_cast<uint32_t>(m.address);
             const std::optional<il2pdb::seg_off_result> so = pe.seg_off(rva);
@@ -248,13 +180,31 @@ namespace
                 continue;
             }
             const uint32_t size = code_size(m.address, so->sec_end);
-            const uint32_t type_index = m.has_sig ? types.sig_to_proc(m.sig) : 0;
+            const uint32_t type_index = m.signature.empty() ? 0 : types.sig_to_proc(m.signature);
             procs.push_back(il2pdb::proc{m.name, so->seg, so->off, size, type_index});
         }
-        std::fprintf(stderr, "procs: %zu\n", procs.size());
+
+        std::vector<il2pdb::data_sym> data_syms{};
+        data_syms.reserve(res.data_symbols.size());
+        for (const il2pdb::dump::data_symbol & d : res.data_symbols)
+        {
+            const std::optional<il2pdb::seg_off_result> so = pe.seg_off(static_cast<uint32_t>(d.rva));
+            if (!so.has_value())
+            {
+                continue;
+            }
+            uint32_t ti = 0;
+            if (!d.type_base.empty())
+            {
+                const uint32_t base_ti = types.resolve_typeref(d.type_base, d.pointer_depth);
+                ti = d.array_count > 0 ? types.make_array(base_ti, d.array_count * 8) : base_ti;
+            }
+            data_syms.push_back(il2pdb::data_sym{d.name, so->seg, so->off, ti});
+        }
+        std::fprintf(stderr, "data symbols: %zu\n", data_syms.size());
 
         il2pdb::build_input input{pe.guid, pe.age, std::move(procs), std::move(types.records),
-            pe.section_headers, {}};
+            pe.section_headers, std::move(data_syms)};
         const std::vector<uint8_t> pdb = il2pdb::build_pdb(input);
         il2pdb::write_bytes(in.out_pdb, std::span<const uint8_t>(pdb.data(), pdb.size()));
         std::fprintf(stderr, "wrote %s (%zu mb)\n", in.out_pdb.c_str(), pdb.size() / 1000000);
@@ -264,46 +214,44 @@ namespace
 
 int main(int argc, char** argv)
 {
-    inputs in{};
+    std::vector<std::string> positional{};
+    for (int i = 1; i < argc; ++i)
+    {
+        const std::string arg = argv[i];
+        if (arg == "--help" || arg == "-h")
+        {
+            std::fprintf(stderr, "usage: rust_pdb [<GameAssembly.dll> <global-metadata.dat> "
+                "[out.pdb]]\n  (no arguments: auto-detect steam rust)\n");
+            return 0;
+        }
+        positional.push_back(arg);
+    }
 
-    if (argc == 1)
+    inputs in{};
+    if (positional.empty())
     {
         const std::optional<inputs> detected = auto_detect();
         if (!detected.has_value())
         {
-            std::fprintf(stderr, "auto-detect failed: need GameAssembly.dll (steam rust) plus "
-                "il2cpp.h and script.json (il2cppdumper output)\n");
+            std::fprintf(stderr, "could not auto-detect rust; pass <GameAssembly.dll> "
+                "<global-metadata.dat> [out.pdb]\n");
             return 2;
         }
         in = *detected;
-        std::fprintf(stderr, "auto-detected:\n  dll:    %s\n  header: %s\n  script: %s\n"
-            "  out:    %s\n", in.dll.c_str(), in.header.c_str(), in.script.c_str(),
-            in.out_pdb.c_str());
+        std::fprintf(stderr, "auto-detected: %s\n", in.dll.c_str());
     }
-    else if (argc == 2)
+    else if (positional.size() == 2 || positional.size() == 3)
     {
-        const fs::path dir = argv[1];
-        in.dll = (dir / "GameAssembly.dll").string();
-        in.header = (dir / "il2cpp.h").string();
-        in.script = (dir / "script.json").string();
-        in.out_pdb = (dir / "GameAssembly.pdb").string();
-    }
-    else if (argc == 4 || argc == 5)
-    {
-        in.dll = argv[1];
-        in.header = argv[2];
-        in.script = argv[3];
-        in.out_pdb = argc == 5
-            ? std::string(argv[4])
+        in.dll = positional[0];
+        in.metadata = positional[1];
+        in.out_pdb = positional.size() == 3
+            ? positional[2]
             : fs::path(in.dll).replace_extension(".pdb").string();
     }
     else
     {
-        std::fprintf(stderr,
-            "usage:\n"
-            "  rust_pdb                                              auto-detect rust + dump\n"
-            "  rust_pdb <dir>                                        dir has dll, il2cpp.h, script.json\n"
-            "  rust_pdb <GameAssembly.dll> <il2cpp.h> <script.json> [out.pdb]\n");
+        std::fprintf(stderr, "usage: rust_pdb [<GameAssembly.dll> <global-metadata.dat> "
+            "[out.pdb]]\n");
         return 2;
     }
 
